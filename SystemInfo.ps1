@@ -14,26 +14,19 @@
 
 
 $os = Get-CimInstance -ClassName Win32_OperatingSystem 
-$operatingReport =$os |
-    Select-Object -Property Caption, Version, LastBootUpTime 
-
-$operatingReport |
-    Export-Csv -Path "C:\Users\conor.harkin\Desktop\Powershell\operating-report.csv" -NoTypeInformation
-
 $cs = Get-CimInstance -ClassName Win32_ComputerSystem 
-$computerReport = $cs |
-    Select-Object -Property Name, Manufacturer, Model,
-    @{Name = 'RAM'; Expression = { [math]::Round($_.TotalPhysicalMemory / 1GB, 2) }} 
 
-$computerReport |
-    Export-Csv -Path "C:\Users\conor.harkin\Desktop\Powershell\computer-report.csv" -NoTypeInformation
+$systemReport = [pscustomobject]@{
+    ComputerName = $cs.Name
+    Manufacturer = $cs.Manufacturer
+    Model        = $cs.Model
+    RAMGB        = [math]::Round($cs.TotalPhysicalMemory / 1GB, 2)
+    OS           = $os.Caption
+    OSVersion    = $os.Version
+    LastBoot     = $os.LastBootUpTime
+}
 
-$computerReport | Format-List
 
+$systemReport |
+ Export-Csv -Path "C:\Users\conor.harkin\Desktop\Powershell\systemReport.csv" -NoTypeInformation
 
-# Get-CimInstance -ClassName Win32_LogicalDisk | 
-
- #   Where-Object { $_.DriveType -eq 3 } | 
- #   Select-Object -Property DeviceID, 
-  #      @{Name = 'SizeGB'; Expression = { [math]::Round($_.Size / 1GB, 2) }}, 
-   #      @{Name = 'FreeGB'; Expression = { [math]::Round($_.FreeSpace / 1GB, 2) }} 
