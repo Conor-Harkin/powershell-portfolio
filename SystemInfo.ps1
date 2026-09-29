@@ -14,23 +14,26 @@
 
 
 $os = Get-CimInstance -ClassName Win32_OperatingSystem 
-$os |
-    Select-Object -Property Caption, Version, LastBootUpTime |
-    Format-List 
+$operatingReport =$os |
+    Select-Object -Property Caption, Version, LastBootUpTime 
+
+$operatingReport |
+    Export-Csv -Path "C:\Users\conor.harkin\Desktop\Powershell\operating-report.csv" -NoTypeInformation
 
 $cs = Get-CimInstance -ClassName Win32_ComputerSystem 
-
-$cs |
+$computerReport = $cs |
     Select-Object -Property Name, Manufacturer, Model,
-    @{Name = 'RAM'; Expression = { [math]::Round($_.TotalPhysicalMemory / 1GB, 2) }} |
-    Format-List 
+    @{Name = 'RAM'; Expression = { [math]::Round($_.TotalPhysicalMemory / 1GB, 2) }} 
+
+$computerReport |
+    Export-Csv -Path "C:\Users\conor.harkin\Desktop\Powershell\computer-report.csv" -NoTypeInformation
+
+$computerReport | Format-List
 
 
-Get-CimInstance -ClassName Win32_LogicalDisk | 
+# Get-CimInstance -ClassName Win32_LogicalDisk | 
 
-    Where-Object { $_.DriveType -eq 3 } | 
-    Select-Object -Property DeviceID, 
-        @{Name = 'SizeGB'; Expression = { [math]::Round($_.Size / 1GB, 2) }}, 
-         @{Name = 'FreeGB'; Expression = { [math]::Round($_.FreeSpace / 1GB, 2) }} 
-
-
+ #   Where-Object { $_.DriveType -eq 3 } | 
+ #   Select-Object -Property DeviceID, 
+  #      @{Name = 'SizeGB'; Expression = { [math]::Round($_.Size / 1GB, 2) }}, 
+   #      @{Name = 'FreeGB'; Expression = { [math]::Round($_.FreeSpace / 1GB, 2) }} 
