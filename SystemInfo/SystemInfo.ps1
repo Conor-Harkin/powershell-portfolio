@@ -1,5 +1,5 @@
 # Get-SystemInfo.ps1
-# Collect local Windows system information and export two CSV reports.
+# Collect local Windows system information and export a CSV report.
 #
 # Computer Name
 # Manufactorer Get-CimInstance -ClassName Manufactorer
