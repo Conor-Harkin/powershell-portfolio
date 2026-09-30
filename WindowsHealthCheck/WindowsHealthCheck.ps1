@@ -8,7 +8,20 @@ Get-CimInstance -ClassName Win32_LogicalDisk |
     Select-Object -Property DeviceID, 
         @{Name = 'SizeGB'; Expression = { [math]::Round( $_.Size/ 1GB, 2) }},
         @{Name = 'FreeDiskSpaceGB'; Expression = { [math]::Round($_.FreeSpace / 1GB, 2) }},
-	@{Name = '%FreeSpace'; Expression = { '{0}%' -f [math]::Round(($_.FreeSpace/$_.Size)*100,0) }} | Format-Table -AutoSize
+	@{Name = '%FreeSpace'; Expression = { '{0}%' -f [math]::Round(($_.FreeSpace/$_.Size)*100,0) }},
+	@{Name = 'Status'; Expression = { $percentFree = ($_.FreeSpace / $_.Size) * 100
+
+        if ($percentFree -lt 10) {
+            'Critical'
+        }
+        elseif ($percentFree -lt 20) {
+            'Warning'
+        }
+        else {
+            'OK'
+        }
+    }
+} | Format-Table -AutoSize
 
 $os = Get-CimInstance -ClassName Win32_operatingSystem 
 
