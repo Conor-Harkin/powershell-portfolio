@@ -8,15 +8,18 @@ Get-CimInstance -ClassName Win32_LogicalDisk |
     Select-Object -Property DeviceID, 
         @{Name = 'SizeGB'; Expression = { [math]::Round( $_.Size/ 1GB, 2) }},
         @{Name = 'FreeDiskSpaceGB'; Expression = { [math]::Round($_.FreeSpace / 1GB, 2) }},
-	@{Name = '%FreeSpace'; Expression = { '{0}%' -f [math]::Round(($_.FreeSpace/$_.Size)*100,0) }}
+	@{Name = '%FreeSpace'; Expression = { '{0}%' -f [math]::Round(($_.FreeSpace/$_.Size)*100,0) }} | Format-Table -AutoSize
 
-Get-CimInstance -ClassName Win32_operatingSystem | 
-	Select-Object LastBootUptime
-	Select-Object LocalDateTime
+$os = Get-CimInstance -ClassName Win32_operatingSystem 
 
-	$BootTime = Get-CimInstance -ClassName Win32_operatingSystem | Select-Object LastBootUpTime
-	$LocalTime = Get-CimInstance -ClassName Win32_operatingSystem | Select-Object LocalDateTime
+	$BootTime = $os.LastBootUpTime
+	$LocalTime = $os.LocalDateTime
 
 	$Runtime = $LocalTime - $BootTime
 
-	$Runtime 
+	$RoundedRunTime = [TimeSpan]::FromSeconds( [math]::Round($Runtime.TotalSeconds,0) )
+
+	
+	Write-Host "Uptime: $($RoundedRunTime.ToString('dd\:hh\:mm\:ss'))"
+	Write-Host "In the Form DD:MM:HH:SS"
+
