@@ -34,5 +34,5 @@ $os = Get-CimInstance -ClassName Win32_operatingSystem
 
 	
 	Write-Host "Uptime: $($RoundedRunTime.ToString('dd\:hh\:mm\:ss'))"
-	Write-Host "In the Form DD:MM:HH:SS"
+	Write-Host "In the Form DD:HH:MM:SS"
 
